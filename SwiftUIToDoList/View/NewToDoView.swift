@@ -119,10 +119,14 @@ struct NewToDoView: View {
     
     private func addTask(name: String, priority: Priority, isComplete: Bool = false) {
         
-//        let task = ToDoItem(name: name, priority: priority, isComplete: isComplete)
-//        todoItems.append(task)
         let task = ToDoItem(name: name, priority: priority, isComplete: isComplete)
         modelContext.insert(task)
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
     }
 }
 

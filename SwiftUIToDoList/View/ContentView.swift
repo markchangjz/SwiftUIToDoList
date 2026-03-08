@@ -17,6 +17,8 @@ struct ContentView: View {
     
     @State private var showNewTask = false
     
+    @Environment(\.modelContext) private var modelContext
+    
     var body: some View {
         
         ZStack {
@@ -45,6 +47,7 @@ struct ContentView: View {
                     ForEach(todoItems) { todoItem in
                         ToDoListRow(todoItem: todoItem)
                     }
+                    .onDelete(perform: deleteTask)
                                        
                 }
                 .listStyle(.plain)
@@ -77,11 +80,39 @@ struct ContentView: View {
         }
     }
     
-
+    private func deleteTask(at indexSet: IndexSet) {
+        for index in indexSet {
+            let itemToDelete = todoItems[index]
+            modelContext.delete(itemToDelete)
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 }
+
+@MainActor
+let previewContainer: ModelContainer = {
+    do {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: ToDoItem.self, configurations: config)
+        for index in 0..<10 {
+            let newItem = ToDoItem(name: "To do item #\(index)")
+            container.mainContext.insert(newItem)
+        }
+        return container
+    } catch {
+        fatalError("Failed to create container")
+    }
+}()
+
 
 #Preview {
     ContentView()
+        .modelContainer(previewContainer)
 }
 
 struct BlankView : View {
@@ -108,6 +139,7 @@ struct NoDataView: View {
 
 struct ToDoListRow: View {
     
+    @Environment(\.modelContext) private var modelContext
     @Bindable var todoItem: ToDoItem
     
     var body: some View {
@@ -124,7 +156,11 @@ struct ToDoListRow: View {
                     .frame(width: 10, height: 10)
                     .foregroundColor(self.color(for: self.todoItem.priority))
             }
-        }.toggleStyle(CheckboxStyle())
+        }
+        .toggleStyle(CheckboxStyle())
+        .onChange(of: todoItem.isComplete) { _, _ in
+            try? modelContext.save()
+        }
     }
     
     private func color(for priority: Priority) -> Color {
