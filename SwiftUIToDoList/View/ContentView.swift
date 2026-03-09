@@ -15,8 +15,14 @@ struct ContentView: View {
     @State private var newItemName: String = ""
     @State private var newItemPriority: Priority = .normal
     
-    @State private var showNewTask = false
+    enum OverlayState {
+        case hidden
+        case adding
+        case editing(ToDoItem)
+    }
     
+    @State private var overlayState: OverlayState = .hidden
+
     @Environment(\.modelContext) private var modelContext
     
     var body: some View {
@@ -28,6 +34,9 @@ struct ContentView: View {
                         
                         ForEach(todoItems) { todoItem in
                             ToDoListRow(todoItem: todoItem)
+                                .onTapGesture {
+                                    self.overlayState = .editing(todoItem)
+                                }
                         }
                         .onDelete(perform: deleteTask)
                         
@@ -41,22 +50,33 @@ struct ContentView: View {
                     NoDataView()
                 }
                 
-                // Display the "Add new todo" view
-                if showNewTask {
+                // Overlay View Display
+                switch overlayState {
+                case .hidden:
+                    EmptyView()
+                case .adding:
                     BlankView(bgColor: .black)
                         .opacity(0.5)
                         .onTapGesture {
-                            self.showNewTask = false
+                            self.overlayState = .hidden
                         }
                     
-                    NewToDoView(isShow: $showNewTask, name: "", priority: .normal)
+                    NewToDoView(onDismiss: { overlayState = .hidden }, name: "", priority: .normal)
+                case .editing(let item):
+                    BlankView(bgColor: .black)
+                        .opacity(0.5)
+                        .onTapGesture {
+                            self.overlayState = .hidden
+                        }
+                    
+                    EditToDoView(toDoItem: item, onDismiss: { overlayState = .hidden })
                 }
             }
             .navigationTitle("ToDo List")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        self.showNewTask = true
+                        self.overlayState = .adding
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .foregroundStyle(.purple)
@@ -145,6 +165,7 @@ struct ToDoListRow: View {
                     .frame(width: 10, height: 10)
                     .foregroundColor(self.color(for: self.todoItem.priority))
             }
+            .contentShape(Rectangle())
         }
         .toggleStyle(CheckboxStyle())
         .onChange(of: todoItem.isComplete) { _, _ in

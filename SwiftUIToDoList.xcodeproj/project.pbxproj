@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D221EA62F5EA40200D78C17 /* EditToDoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D221EA52F5EA40200D78C17 /* EditToDoView.swift */; };
 		F4EED6782A73756B00F2ED34 /* SwiftUIToDoListApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EED6772A73756B00F2ED34 /* SwiftUIToDoListApp.swift */; };
 		F4EED67A2A73756B00F2ED34 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EED6792A73756B00F2ED34 /* ContentView.swift */; };
 		F4EED67C2A73756E00F2ED34 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4EED67B2A73756E00F2ED34 /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0D221EA52F5EA40200D78C17 /* EditToDoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditToDoView.swift; sourceTree = "<group>"; };
 		F4EED6742A73756B00F2ED34 /* SwiftUIToDoList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUIToDoList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4EED6772A73756B00F2ED34 /* SwiftUIToDoListApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIToDoListApp.swift; sourceTree = "<group>"; };
 		F4EED6792A73756B00F2ED34 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				F4EED6792A73756B00F2ED34 /* ContentView.swift */,
 				F4EED6892A737FE900F2ED34 /* CheckboxStyle.swift */,
 				F4EED68B2A73800900F2ED34 /* NewToDoView.swift */,
+				0D221EA52F5EA40200D78C17 /* EditToDoView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -166,6 +169,7 @@
 				F4EED67A2A73756B00F2ED34 /* ContentView.swift in Sources */,
 				F4EED6782A73756B00F2ED34 /* SwiftUIToDoListApp.swift in Sources */,
 				F4EED68A2A737FE900F2ED34 /* CheckboxStyle.swift in Sources */,
+				0D221EA62F5EA40200D78C17 /* EditToDoView.swift in Sources */,
 				F4EED6882A737CD300F2ED34 /* ToDoItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

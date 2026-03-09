@@ -1,18 +1,20 @@
 //
-//  NewToDoView.swift
+//  EditToDoView.swift
 //  SwiftUIToDoList
 //
-//  Created by Simon Ng on 28/7/2023.
+//  Created by Mark Chang on 2026/3/9.
 //
 
 import SwiftUI
 
-struct NewToDoView: View {
+struct EditToDoView: View {
     
+    var toDoItem: ToDoItem
     var onDismiss: () -> Void
-    @State var name: String
-    @State var priority: Priority
-    @State var isEditing = false
+    
+    @State private var name: String = ""
+    @State private var priority: Priority = .normal
+    @State private var isEditing = false
     
     @Environment(\.modelContext) private var modelContext
     
@@ -22,7 +24,7 @@ struct NewToDoView: View {
             
             VStack(alignment: .leading) {
                 HStack {
-                    Text("Add a new task")
+                    Text("Edit task")
                         .font(.system(.title, design: .rounded))
                         .bold()
                     
@@ -60,7 +62,7 @@ struct NewToDoView: View {
                         .foregroundStyle(.white)
                         .cornerRadius(8)
                         .onTapGesture {
-                            self.priority = .high
+                            priority = .high
                         }
                     
                     Text("Normal")
@@ -70,7 +72,7 @@ struct NewToDoView: View {
                         .foregroundStyle(.white)
                         .cornerRadius(8)
                         .onTapGesture {
-                            self.priority = .normal
+                            priority = .normal
                         }
                     
                     Text("Low")
@@ -80,7 +82,7 @@ struct NewToDoView: View {
                         .foregroundStyle(.white)
                         .cornerRadius(8)
                         .onTapGesture {
-                            self.priority = .low
+                            priority = .low
                         }
                 }
                 .padding(.bottom, 30)
@@ -88,15 +90,20 @@ struct NewToDoView: View {
                 // Save button for adding the todo item
                 Button(action: {
                     
-                    if self.name.trimmingCharacters(in: .whitespaces) == "" {
+                    if name.trimmingCharacters(in: .whitespaces) == "" {
                         return
                     }
                     
                     self.onDismiss()
-                    self.addTask(name: self.name, priority: self.priority)
+                    
+                    // Only update the model data when "Save" is pressed.
+                    toDoItem.name = name
+                    toDoItem.priority = priority
+                    
+                    self.editTask()
                     
                 }) {
-                    Text("Add")
+                    Text("Save")
                         .font(.system(.headline, design: .rounded))
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .padding()
@@ -113,13 +120,13 @@ struct NewToDoView: View {
             .offset(y: isEditing ? -320 : 0)
         }
         .edgesIgnoringSafeArea(.bottom)
+        .onAppear {
+            self.name = toDoItem.name
+            self.priority = toDoItem.priority
+        }
     }
     
-    private func addTask(name: String, priority: Priority, isComplete: Bool = false) {
-        
-        let task = ToDoItem(name: name, priority: priority, isComplete: isComplete)
-        modelContext.insert(task)
-        
+    private func editTask() {
         do {
             try modelContext.save()
         } catch {
@@ -128,6 +135,6 @@ struct NewToDoView: View {
     }
 }
 
-#Preview {    
-    NewToDoView(onDismiss: {}, name: "", priority: .normal)
+#Preview {
+    EditToDoView(toDoItem: ToDoItem(name: "Buy a book", priority: .low), onDismiss: {})
 }
