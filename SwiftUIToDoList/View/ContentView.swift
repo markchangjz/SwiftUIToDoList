@@ -10,7 +10,7 @@ import SwiftData
 
 struct ContentView: View {
         
-    @Query(sort: \ToDoItem.priorityNum, order: .reverse) var todoItems: [ToDoItem] = []
+    @Query(sort: [SortDescriptor(\ToDoItem.priorityNum, order: .reverse), SortDescriptor(\ToDoItem.name, order: .forward)]) var todoItems: [ToDoItem] = []
     
     @State private var newItemName: String = ""
     @State private var newItemPriority: Priority = .normal
