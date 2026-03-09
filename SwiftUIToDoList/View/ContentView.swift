@@ -12,9 +12,6 @@ struct ContentView: View {
         
     @Query(sort: [SortDescriptor(\ToDoItem.priorityNum, order: .reverse), SortDescriptor(\ToDoItem.name, order: .forward)]) var todoItems: [ToDoItem] = []
     
-    @State private var newItemName: String = ""
-    @State private var newItemPriority: Priority = .normal
-    
     enum OverlayState {
         case hidden
         case adding
