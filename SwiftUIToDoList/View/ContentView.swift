@@ -21,61 +21,47 @@ struct ContentView: View {
     
     var body: some View {
         
-        ZStack {
-            
-            VStack {
-                
-                HStack {
-                    Text("ToDo List")
-                        .font(.system(size: 40, weight: .black, design: .rounded))
+        NavigationStack {
+            ZStack {
+                VStack {
+                    List {
                         
-                    Spacer()
+                        ForEach(todoItems) { todoItem in
+                            ToDoListRow(todoItem: todoItem)
+                        }
+                        .onDelete(perform: deleteTask)
+                        
+                    }
+                    .listStyle(.plain)
                     
-                    Button(action: {
+                }
+                
+                // If there is no data, show an empty view
+                if todoItems.count == 0 {
+                    NoDataView()
+                }
+                
+                // Display the "Add new todo" view
+                if showNewTask {
+                    BlankView(bgColor: .black)
+                        .opacity(0.5)
+                        .onTapGesture {
+                            self.showNewTask = false
+                        }
+                    
+                    NewToDoView(isShow: $showNewTask, name: "", priority: .normal)
+                }
+            }
+            .navigationTitle("ToDo List")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
                         self.showNewTask = true
-                        
-                    }) {
+                    } label: {
                         Image(systemName: "plus.circle.fill")
-                            .font(.largeTitle)
                             .foregroundStyle(.purple)
                     }
                 }
-                .padding()
-                
-                List {
-                    
-                    ForEach(todoItems) { todoItem in
-                        ToDoListRow(todoItem: todoItem)
-                    }
-                    .onDelete(perform: deleteTask)
-                                       
-                }
-                .listStyle(.plain)
-                
-            }
-            .rotation3DEffect(Angle(degrees: showNewTask ? 5 : 0), axis: (x: 1, y: 0, z: 0))
-            .offset(y: showNewTask ? -50 : 0)
-            .animation(.easeOut, value: showNewTask)
-            .onAppear {
-                UITableView.appearance().separatorColor = .clear
-            }
-            
-            // If there is no data, show an empty view
-            if todoItems.count == 0 {
-                NoDataView()
-            }
-            
-            // Display the "Add new todo" view
-            if showNewTask {
-                BlankView(bgColor: .black)
-                    .opacity(0.5)
-                    .onTapGesture {
-                        self.showNewTask = false
-                    }
-                
-                NewToDoView(isShow: $showNewTask, name: "", priority: .normal)
-                    .transition(.move(edge: .bottom))
-                    .animation(.interpolatingSpring(stiffness: 200.0, damping: 25.0, initialVelocity: 10.0), value: showNewTask)
             }
         }
     }
@@ -115,6 +101,10 @@ let previewContainer: ModelContainer = {
         .modelContainer(previewContainer)
 }
 
+#Preview("No Data") {
+    ContentView()
+}
+
 struct BlankView : View {
 
     var bgColor: Color
@@ -147,7 +137,6 @@ struct ToDoListRow: View {
             HStack {
                 Text(self.todoItem.name)
                     .strikethrough(self.todoItem.isComplete, color: .black)
-                    .bold()
                     .animation(.default)
                 
                 Spacer()
