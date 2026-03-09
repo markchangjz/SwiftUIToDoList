@@ -29,25 +29,20 @@ struct ContentView: View {
         
         NavigationStack {
             ZStack {
-                VStack {
-                    List {
-                        
-                        ForEach(todoItems) { todoItem in
-                            ToDoListRow(todoItem: todoItem)
-                                .onTapGesture {
-                                    self.overlayState = .editing(todoItem)
-                                }
-                        }
-                        .onDelete(perform: deleteTask)
-                        
+                List {
+                    ForEach(todoItems) { todoItem in
+                        ToDoListRow(todoItem: todoItem)
+                            .onTapGesture {
+                                self.overlayState = .editing(todoItem)
+                            }
                     }
-                    .listStyle(.plain)
-                    
+                    .onDelete(perform: deleteTask)
                 }
-                
-                // If there is no data, show an empty view
-                if todoItems.count == 0 {
-                    NoDataView()
+                .listStyle(.plain)
+                .overlay {
+                    if todoItems.isEmpty {
+                        NoDataView()
+                    }
                 }
                 
                 // Overlay View Display
