@@ -19,15 +19,23 @@ struct ContentView: View {
     }
     
     @State private var overlayState: OverlayState = .hidden
+    @State private var searchText = ""
 
     @Environment(\.modelContext) private var modelContext
     
+    private var filteredTodoItems: [ToDoItem] {
+        todoItems.filter {
+            searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText)
+        }
+    }
+
     var body: some View {
         
         NavigationStack {
+            SearchBar(text: $searchText)
             ZStack {
                 List {
-                    ForEach(todoItems) { todoItem in
+                    ForEach(filteredTodoItems) { todoItem in
                         ToDoListRow(todoItem: todoItem)
                             .onTapGesture {
                                 self.overlayState = .editing(todoItem)
@@ -65,6 +73,7 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("ToDo List")
+//            .searchable(text: $searchText, prompt: "Search...") // 使用系統
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -80,7 +89,7 @@ struct ContentView: View {
     
     private func deleteTask(at indexSet: IndexSet) {
         for index in indexSet {
-            let itemToDelete = todoItems[index]
+            let itemToDelete = filteredTodoItems[index]
             modelContext.delete(itemToDelete)
         }
         
