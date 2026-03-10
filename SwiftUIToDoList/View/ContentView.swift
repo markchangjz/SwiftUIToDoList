@@ -110,6 +110,7 @@ let previewContainer: ModelContainer = {
             let newItem = ToDoItem(name: "To do item #\(index)")
             container.mainContext.insert(newItem)
         }
+        try container.mainContext.save()
         return container
     } catch {
         fatalError("Failed to create container")
